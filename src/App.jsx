@@ -10,6 +10,7 @@ import SkillsExchange from './pages/SkillsExchange';
 import { LogOut } from 'lucide-react';
 
 function App() {
+  // 1. Initialize State from LocalStorage
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem("unitrade_isLoggedIn") === "true";
   });
@@ -22,6 +23,7 @@ function App() {
     return localStorage.getItem("unitrade_activeTab") || "home";
   });
 
+  // 2. Handlers
   const handleLogin = (email) => {
     localStorage.setItem("unitrade_isLoggedIn", "true");
     localStorage.setItem("unitrade_userEmail", email);
@@ -30,9 +32,7 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("unitrade_isLoggedIn");
-    localStorage.removeItem("unitrade_userEmail");
-    localStorage.removeItem("unitrade_activeTab");
+    localStorage.clear(); // Clears everything
     setIsLoggedIn(false);
     setUserEmail('');
     setActiveTab('home');
@@ -43,15 +43,18 @@ function App() {
     setActiveTab(tabId);
   };
 
+  // 3. Login Screen Check
   if (!isLoggedIn) {
     return <Login onLoginSuccess={handleLogin} />;
   }
 
+  // 4. Main App Layout
   return (
     <div className="flex h-screen bg-slate-50 font-sans">
       
-      {/* DESKTOP SIDEBAR (Hidden on Mobile) */}
-      <div className="hidden md:flex h-full">
+      {/* --- DESKTOP SIDEBAR --- */}
+      {/* Hidden on mobile, Flex on Medium screens+ */}
+      <div className="hidden md:flex h-full border-r border-slate-200">
         <Sidebar 
           activeTab={activeTab} 
           onTabChange={handleTabChange}
@@ -60,11 +63,12 @@ function App() {
         />
       </div>
       
-      {/* MAIN CONTENT WRAPPER */}
-      <div className="flex-1 flex flex-col h-full relative">
+      {/* --- MAIN CONTENT AREA --- */}
+      <div className="flex-1 flex flex-col h-full relative w-full">
         
-        {/* --- MOBILE TOP BAR (Updated with "Logout" text) --- */}
-        <header className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center sticky top-0 z-40">
+        {/* MOBILE HEADER (Logo + Logout) */}
+        {/* Hidden on Desktop (md:hidden) */}
+        <header className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center sticky top-0 z-40 shadow-sm">
           <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
             UniTrade
           </h1>
@@ -78,9 +82,10 @@ function App() {
           </button>
         </header>
 
-        {/* PAGE CONTENT */}
-        <main className="flex-1 overflow-auto pb-24 md:pb-0">
-          <div className="p-4 md:p-0">
+        {/* SCROLLABLE PAGE CONTENT */}
+        <main className="flex-1 overflow-auto w-full">
+          {/* Padding bottom 24 for mobile nav, padding 0 for desktop */}
+          <div className="pb-24 md:pb-0"> 
             {activeTab === 'home' && <LandingPage />}
             {activeTab === 'carpooling' && <Carpooling />}
             {activeTab === 'lost-found' && <LostFound />}
@@ -90,7 +95,8 @@ function App() {
         </main>
       </div>
 
-      {/* MOBILE BOTTOM NAV */}
+      {/* --- MOBILE BOTTOM NAV --- */}
+      {/* Hidden on Desktop */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
         <MobileNav activeTab={activeTab} onTabChange={handleTabChange} />
       </div>
