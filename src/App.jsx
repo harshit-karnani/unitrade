@@ -7,7 +7,7 @@ import Carpooling from './pages/Carpooling';
 import LostFound from './pages/LostFound';
 import Marketplace from './pages/Marketplace';
 import SkillsExchange from './pages/SkillsExchange';
-import { LogOut } from 'lucide-react'; // <--- Import the Logout Icon
+import { LogOut } from 'lucide-react';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -63,22 +63,24 @@ function App() {
       {/* MAIN CONTENT WRAPPER */}
       <div className="flex-1 flex flex-col h-full relative">
         
-        {/* --- NEW: MOBILE TOP BAR (Only shows on mobile) --- */}
-        <header className="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center sticky top-0 z-40">
+        {/* --- MOBILE TOP BAR (Updated with "Logout" text) --- */}
+        <header className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center sticky top-0 z-40">
           <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
             UniTrade
           </h1>
+          
           <button 
             onClick={handleLogout}
-            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-slate-200"
           >
-            <LogOut className="w-5 h-5" />
+            <span className="text-xs font-bold uppercase tracking-wide">Logout</span>
+            <LogOut className="w-4 h-4" />
           </button>
         </header>
 
         {/* PAGE CONTENT */}
         <main className="flex-1 overflow-auto pb-24 md:pb-0">
-          <div className="p-4 md:p-0"> {/* Add padding for content */}
+          <div className="p-4 md:p-0">
             {activeTab === 'home' && <LandingPage />}
             {activeTab === 'carpooling' && <Carpooling />}
             {activeTab === 'lost-found' && <LostFound />}
