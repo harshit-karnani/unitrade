@@ -7,11 +7,9 @@ import Carpooling from './pages/Carpooling';
 import LostFound from './pages/LostFound';
 import Marketplace from './pages/Marketplace';
 import SkillsExchange from './pages/SkillsExchange';
+import { LogOut } from 'lucide-react'; // <--- Import the Logout Icon
 
 function App() {
-  // 1. INITIALIZE STATE FROM LOCAL STORAGE
-  // Instead of starting at 'false', we check if we saved data previously.
-  
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem("unitrade_isLoggedIn") === "true";
   });
@@ -24,34 +22,26 @@ function App() {
     return localStorage.getItem("unitrade_activeTab") || "home";
   });
 
-  // 2. SAVE ON LOGIN
   const handleLogin = (email) => {
     localStorage.setItem("unitrade_isLoggedIn", "true");
     localStorage.setItem("unitrade_userEmail", email);
-    
     setUserEmail(email);
     setIsLoggedIn(true);
   };
 
-  // 3. CLEAR ON LOGOUT
   const handleLogout = () => {
     localStorage.removeItem("unitrade_isLoggedIn");
     localStorage.removeItem("unitrade_userEmail");
     localStorage.removeItem("unitrade_activeTab");
-
     setIsLoggedIn(false);
     setUserEmail('');
     setActiveTab('home');
   };
 
-  // 4. SAVE TAB CHANGES
-  // Whenever you switch tabs, save it so refresh keeps you there
   const handleTabChange = (tabId) => {
     localStorage.setItem("unitrade_activeTab", tabId);
     setActiveTab(tabId);
   };
-
-  // --- RENDER ---
 
   if (!isLoggedIn) {
     return <Login onLoginSuccess={handleLogin} />;
@@ -60,26 +50,43 @@ function App() {
   return (
     <div className="flex h-screen bg-slate-50 font-sans">
       
-      {/* DESKTOP SIDEBAR */}
+      {/* DESKTOP SIDEBAR (Hidden on Mobile) */}
       <div className="hidden md:flex h-full">
         <Sidebar 
           activeTab={activeTab} 
-          onTabChange={handleTabChange} // Use the new handler
+          onTabChange={handleTabChange}
           userName={userEmail}
           onLogout={handleLogout}
         />
       </div>
       
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-auto w-full relative">
-        <div className="min-h-full pb-24 md:pb-0">
-          {activeTab === 'home' && <LandingPage />}
-          {activeTab === 'carpooling' && <Carpooling />}
-          {activeTab === 'lost-found' && <LostFound />}
-          {activeTab === 'marketplace' && <Marketplace />}
-          {activeTab === 'skills-exchange' && <SkillsExchange />}
-        </div>
-      </main>
+      {/* MAIN CONTENT WRAPPER */}
+      <div className="flex-1 flex flex-col h-full relative">
+        
+        {/* --- NEW: MOBILE TOP BAR (Only shows on mobile) --- */}
+        <header className="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center sticky top-0 z-40">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+            UniTrade
+          </h1>
+          <button 
+            onClick={handleLogout}
+            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
+        </header>
+
+        {/* PAGE CONTENT */}
+        <main className="flex-1 overflow-auto pb-24 md:pb-0">
+          <div className="p-4 md:p-0"> {/* Add padding for content */}
+            {activeTab === 'home' && <LandingPage />}
+            {activeTab === 'carpooling' && <Carpooling />}
+            {activeTab === 'lost-found' && <LostFound />}
+            {activeTab === 'marketplace' && <Marketplace />}
+            {activeTab === 'skills-exchange' && <SkillsExchange />}
+          </div>
+        </main>
+      </div>
 
       {/* MOBILE BOTTOM NAV */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
